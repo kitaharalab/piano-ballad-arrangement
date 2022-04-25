@@ -26,9 +26,11 @@ static SMFPlayer player1;
 static SMFPlayer player2;
 static JSlider[] slider;
 static JLabel[] aLabel;
+static ResourceBundle rb;
 
 
   public static void main(String[] args){
+       rb = ResourceBundle.getBundle("app");
        CMXController cmx = CMXController.getInstance();
          midi = cmx.readSMFAsMIDIXML(args[0]);
          try {
@@ -115,7 +117,26 @@ static JLabel[] aLabel;
   	   editPanel.setLayout(null);
 
          //制約を格納した配列
-        String[] Rules = {"4分音符分散","8分音符分散", "2分音符分散", "全音符和音", "2分音符和音", "16分→4分", "16分→2分", "8分→4分", "8分→2分", "オクターブ","分散+和音", "5度音追加", "オクターブ音追加","add9","オープンボイシング", "クローズ(和音)", "クローズ(分散)", "和音簡略", "最後の小節適用"};
+        //  String[] Rules = {"4分音符分散","8分音符分散", "2分音符分散", "全音符和音", "2分音符和音", "16分→4分", "16分→2分", "8分→4分", "8分→2分", "オクターブ","分散+和音", "5度音追加", "オクターブ音追加","add9","オープンボイシング", "クローズ(和音)", "クローズ(分散)", "和音簡略", "最後の小節適用"};
+         String[] Rules = {rb.getString("broken.chord.quarter"),
+         rb.getString("broken.chord.eighth"), 
+         rb.getString("broken.chord.half"), 
+         rb.getString("chord.whole"), 
+         rb.getString("chord.half"), 
+         rb.getString("sixteenth.to.quarter"), 
+         rb.getString("sixteenth.to.half"), 
+         rb.getString("eighth.to.quarter"), 
+         rb.getString("eighth.to.half"), 
+         rb.getString("octave"),
+         rb.getString("broken.and.simultaneous"), 
+         rb.getString("add.fifth"), 
+         rb.getString("add.octave"),
+         rb.getString("add9"),
+         rb.getString("open.voicing.chord"), 
+         rb.getString("close.voicing.chord"), 
+         rb.getString("close.voicing.chord.broken"), 
+         rb.getString("simplify.chord"), 
+         rb.getString("apply.last.bar")};
 
 	    Color c = new Color(239, 64, 80);
 	    Random r = new Random();
@@ -125,6 +146,7 @@ static JLabel[] aLabel;
           JLabel rules[] = new JLabel[26];
           for(int i=0; i<Rules.length; i++){
              rules[i] = new JLabel(Rules[i]);
+             rules[i].setToolTipText(Rules[i]);
              rules[i].setBounds(20, 50+i*25, 120, 25);
             // else rules[i].setBounds(10+120, 80+(i%13)*30, 120, 30);
              rules[i].setBackground(new Color(255, 192, 203));
@@ -209,41 +231,42 @@ static JLabel[] aLabel;
             };
 
 
-           JButton clear = new JButton("クリア");
+           JButton clear = new JButton(rb.getString("clear.edit"));
            clear.setBounds(930, 30, 120, 60);
            clear.setOpaque(true);
            clear.addActionListener(clearSelect);
            p.add(clear);
 
-           JButton auto = new JButton("自動アレンジ");
+           JButton auto = new JButton(rb.getString("show.automatic.arrangement.form"));
+           auto.setToolTipText(rb.getString("show.automatic.arrangement.form"));
            auto.setBounds(930, 120, 120, 60);
            auto.setOpaque(true);
            p.add(auto);
 
 
-           JButton randomButton = new JButton("ランダム");
+           JButton randomButton = new JButton(rb.getString("randamize"));
            randomButton.setBounds(995, 120, 55, 60);
            randomButton.setOpaque(true);
            //p.add(randomButton);
 
 
-           JButton play1 = new JButton("原曲再生");
+           JButton play1 = new JButton(rb.getString("play.original"));
            play1.setBounds(930, 200, 120, 60);
            play1.setOpaque(true);
            p.add(play1);
 
-           JButton play2 = new JButton("バラード再生");
+           JButton play2 = new JButton(rb.getString("play.arranged"));
            play2.setBounds(930, 270, 120, 60);
            play2.setOpaque(true);
            play2.setVisible(false);
            p.add(play2);
 
-           JButton stop = new JButton("再生停止");
+           JButton stop = new JButton(rb.getString("stop.playing"));
            stop.setBounds(930, 340, 120, 60);
            stop.setOpaque(true);
            p.add(stop);
 
-          JButton start = new JButton("生成");
+          JButton start = new JButton(rb.getString("generate"));
           start.setBounds(930, 480, 120, 60);
           start.setOpaque(true);
           p.add(start);
@@ -256,7 +279,7 @@ static JLabel[] aLabel;
          int[] EPS = new int[6];   //EndPartSection;
 
               //パート入力フォーム
-               JFrame partFrame = new JFrame("自動アレンジ設定");
+               JFrame partFrame = new JFrame(rb.getString("automatic.arrangement.settings"));
                partFrame.setBounds(300,100,600,420);
                partFrame.setVisible(false);
 
@@ -266,14 +289,19 @@ static JLabel[] aLabel;
                setPanel.setVisible(true);
 
 
-               String[] song = {"イントロ：", "Aパート：", "Bパート：", "Cパート：", "サビ：", "アウトロ："};
+               String[] song = {rb.getString("intro"), 
+               rb.getString("verse1"), 
+               rb.getString("verse2"), 
+               rb.getString("bridge"), 
+               rb.getString("chorus"), 
+               rb.getString("ending")};
                
-               JLabel sLabel = new JLabel("ランダム度");
+               JLabel sLabel = new JLabel(rb.getString("randomization"));
                sLabel.setBounds(400,20,100,30);
                setPanel.add(sLabel);
                
-               JLabel pLabel = new JLabel("パート設定");
-               pLabel.setBounds(50,20,100,30);
+               JLabel pLabel = new JLabel(rb.getString("each.section.setting"));
+               pLabel.setBounds(50,20,200,30);
                setPanel.add(pLabel);
 
                JLabel[] partLabel = new JLabel[song.length];
@@ -296,7 +324,7 @@ static JLabel[] aLabel;
                     startP[i].setOpaque(true);
                     setPanel.add(startP[i]);
 
-                    JLabel label1 = new JLabel("小節目  〜  ");
+                    JLabel label1 = new JLabel(rb.getString("bar") + "  〜  ");
                     label1.setBounds(150,50+i*50,70,30);
                     label1.setOpaque(true);
                     setPanel.add(label1);
@@ -307,7 +335,7 @@ static JLabel[] aLabel;
                     endP[i].setOpaque(true);
                     setPanel.add(endP[i]);
 
-                    JLabel label2 = new JLabel("小節目 ");
+                    JLabel label2 = new JLabel(rb.getString("bar"));
                     label2.setBounds(280,50+i*50,50,30);
                     label2.setOpaque(true);
                     setPanel.add(label2);
@@ -335,7 +363,7 @@ static JLabel[] aLabel;
               public void actionPerformed(ActionEvent event){
                 partFrame.setVisible(true);  //パート入力フォームを表示する
 
-               JButton arrangeButton = new JButton("決定");
+               JButton arrangeButton = new JButton(rb.getString("submit"));
                arrangeButton.setBounds(240,350, 120, 30);
                arrangeButton.setOpaque(true);
                arrangeButton.setBackground(new Color(255, 192, 203));
